@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>商家 · 密码管理 · 隐藏天赋实验室</title>
+<style>
+  :root{--bg:#fbf7f2;--card:#fff;--ink:#2b2622;--muted:#8a8178;--line:#ece4da;--accent:#e8554e}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;padding:18px}
+  .wrap{max-width:560px;margin:0 auto}
+  h1{font-size:22px;margin:8px 0 2px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+  label{display:block;font-size:13px;font-weight:700;color:#a05a3a;margin-bottom:8px;letter-spacing:.4px}
+  input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:15px;margin-bottom:10px;background:#fcfaf7}
+  input:focus{outline:none;border-color:var(--accent)}
+  .btn{width:100%;padding:12px;border:0;border-radius:12px;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+  .btn.ghost{background:#f0e6dc;color:#a05a3a}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:12px}
+  td button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;color:#a05a3a}
+  .tip{font-size:12px;color:var(--muted);line-height:1.6;margin-top:6px}
+  a{color:#a05a3a}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🔐 密码管理后台</h1>
+    <p class="sub">管理测试密码与剩余次数 · 数据存于后端服务器（passwords.json），可随时增删改</p>
+
+    <div class="card">
+      <label>管理密钥 master</label>
+      <input id="master" type="text" placeholder="首次使用为 CHANGE_ME_ADMIN">
+      <button class="btn" onclick="loadList()">进入 / 刷新列表</button>
+    </div>
+
+    <div class="card">
+      <label>新增 / 覆盖密码</label>
+      <input id="npw" type="text" placeholder="密码，仅限字母数字和 - _，如 DOUYIN01">
+      <input id="nmax" type="number" value="3" min="1" placeholder="可测试次数">
+      <input id="nnote" type="text" placeholder="备注 / 渠道，如 抖音投放">
+      <button class="btn" onclick="addPw()">添加 / 覆盖</button>
+    </div>
+
+    <div class="card" id="listCard">
+      <label>当前密码列表</label>
+      <div id="list"><p class="tip">输入密钥后点上方「进入 / 刷新列表」。</p></div>
+    </div>
+
+    <div class="card">
+      <label>修改管理密钥</label>
+      <input id="newm" type="text" placeholder="新密钥（请牢记）">
+      <button class="btn ghost" onclick="setMaster()">修改密钥</button>
+    </div>
+
+    <p class="tip">安全说明：后台通过后端接口（/api/admin）操作，所有读写都需校验管理密钥 master。请尽快把默认密钥 CHANGE_ME_ADMIN 改成你自己的。此页面公开可访问，请妥善保管密钥；建议用 Nginx 反代并配置 HTTPS 以提升安全性。</p>
+  </div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+async function callAdmin(payload){
+  const r = await fetch('/api/admin', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+  return r.json();
+}
+
+async function loadList(){
+  const m = $('master').value.trim();
+  if(!m){ alert('请输入管理密钥'); return; }
+  try{
+    const r = await callAdmin({action:'list', master:m});
+    if(!r.ok){ alert('失败：'+(r.reason||'未知')); return; }
+    renderList(r.rows||[]);
+  }catch(e){ alert('加载失败：'+(e.message||e)); }
+}
+
+function renderList(rows){
+  const box = $('list');
+  if(!rows.length){ box.innerHTML = '<p class="tip">暂无密码，去上方添加一个吧。</p>'; return; }
+  let h = '<table><tr><th>密码</th><th>剩余</th><th>上限</th><th>备注</th><th>操作</th></tr>';
+  rows.forEach(r=>{
+    h += '<tr><td>'+esc(r.code)+'</td><td>'+r.left+'</td><td>'+r.max+'</td><td>'+esc(r.note)+'</td>'+
+         '<td><button onclick="resetPw(\''+esc(r.code)+'\')">重置</button></td></tr>';
+  });
+  h += '</table>';
+  box.innerHTML = h;
+}
+
+async function addPw(){
+  const m = $('master').value.trim(), code = $('npw').value.trim();
+  if(!m || !code){ alert('密钥和密码必填'); return; }
+  const max = parseInt($('nmax').value, 10) || 3, note = $('nnote').value.trim();
+  try{
+    const r = await callAdmin({action:'add', master:m, code, max, note});
+    if(r.ok){ alert('已添加 / 覆盖：'+code); $('npw').value=''; $('nnote').value=''; loadList(); }
+    else if(r.reason==='badcode') alert('密码只能包含字母、数字、- 和 _');
+    else alert('失败：'+r.reason);
+  }catch(e){ alert('出错：'+(e.message||e)); }
+}
+
+async function resetPw(code){
+  const m = $('master').value.trim();
+  try{
+    const r = await callAdmin({action:'reset', master:m, code});
+    if(r.ok){ alert('已重置：'+code); loadList(); } else alert('失败：'+r.reason);
+  }catch(e){ alert('出错：'+(e.message||e)); }
+}
+
+async function setMaster(){
+  const m = $('master').value.trim(), newm = $('newm').value.trim();
+  if(!m || !newm){ alert('请输入当前密钥与新密钥'); return; }
+  try{
+    const r = await callAdmin({action:'setmaster', master:m, newm});
+    if(r.ok){ alert('管理密钥已修改，请牢记新密钥'); $('newm').value=''; }
+    else alert('失败：'+(r.reason||'当前密钥可能不对'));
+  }catch(e){ alert('出错：'+(e.message||e)); }
+}
+</script>
+</body>
+</html>

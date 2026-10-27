@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>爆款测评工具选题创意报告</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2329; --sub:#5b6470;
+    --line:#e6e9ef; --accent:#3b6ef5; --accent2:#ff6b6b; --accent3:#19b38b;
+    --warn:#f5a623; --soft:#eef3ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+  .wrap{max-width:1080px;margin:0 auto;padding:40px 24px 80px}
+  header.hero{background:linear-gradient(135deg,#3b6ef5 0%,#6a4bf5 100%);color:#fff;border-radius:18px;padding:38px 36px;margin-bottom:30px}
+  header.hero h1{margin:0 0 8px;font-size:30px;letter-spacing:.5px}
+  header.hero p{margin:0;opacity:.92;font-size:15px}
+  .tagline{margin-top:16px;font-size:13px;opacity:.85}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 28px;margin-bottom:22px}
+  h2{font-size:21px;margin:0 0 4px;display:flex;align-items:center;gap:10px}
+  h2 .num{background:var(--accent);color:#fff;width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto}
+  .lead{color:var(--sub);font-size:14px;margin:6px 0 18px}
+  h3{font-size:16px;margin:20px 0 10px;color:var(--ink)}
+  p{font-size:14.5px;color:#333}
+  ul{font-size:14.5px;color:#333;padding-left:20px}
+  li{margin:6px 0}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+  .card{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#fcfdff}
+  .card h4{margin:0 0 8px;font-size:15.5px;color:var(--accent)}
+  .pill{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:20px;margin:2px 4px 2px 0;font-weight:600}
+  .p-blue{background:#e8f0ff;color:#2b59d6}
+  .p-red{background:#ffeaea;color:#d83a3a}
+  .p-green{background:#e4f8f1;color:#0f9b76}
+  .p-amber{background:#fff3df;color:#c47e10}
+  .p-violet{background:#f1ecff;color:#6a4bf5}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--soft);font-weight:600;color:#2b3550}
+  tr:nth-child(even) td{background:#fafbfe}
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:10px 0}
+  @media(max-width:760px){.kpi{grid-template-columns:repeat(2,1fr)}}
+  .kpi .box{background:var(--soft);border-radius:12px;padding:14px;text-align:center}
+  .kpi .big{font-size:22px;font-weight:700;color:var(--accent)}
+  .kpi .small{font-size:12px;color:var(--sub)}
+  .idea{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+  .idea .name{font-weight:700;font-size:15px;color:var(--ink);margin-bottom:4px}
+  .idea .row{font-size:13px;color:#444;margin:3px 0}
+  .idea .row b{color:var(--accent);font-weight:600}
+  .callout{border-left:4px solid var(--accent);background:var(--soft);padding:12px 16px;border-radius:0 10px 10px 0;font-size:14px;color:#334}
+  .formula{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+  .formula .node{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px;font-weight:600}
+  .formula .arrow{color:var(--accent);font-weight:700}
+  .footer{color:var(--sub);font-size:12.5px;text-align:center;margin-top:30px}
+  .hl{background:#fff3df;padding:1px 5px;border-radius:4px;font-weight:600;color:#c47e10}
+  .best{color:var(--accent3);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>爆款测评工具 · 选题创意报告</h1>
+  <p>基于市面销量/传播量标杆的复盘，拆解用户画像、选题引力与趣味性机制，并用发散思维产出可落地的选题库。</p>
+  <div class="tagline">研究对象：小红书虚拟测评 · 网易系刷屏 H5 · MBTI/荣格/哲学气质 · AI 玄学 · 穿搭五官测试 · 韩系人格测试生态 · 年度行为盘点</div>
+</header>
+
+<!-- 1. 核心结论 -->
+<section>
+  <h2><span class="num">1</span>核心结论（先看这里）</h2>
+  <ul>
+    <li><b>卖的不是“测试”，是“被看见的情绪价值”。</b>所有爆款都围绕一个底层需求：年轻人想被理解、想确认“我正常”、想用一个好看/有趣的标签定义自己。</li>
+    <li><b>用户画像高度集中：</b>18–35 岁（核心 20–30）、女性占比高、都市职场新人/大学生/单身恋爱群体、高内耗、低客单冲动消费、爱晒爱@朋友。</li>
+    <li><b>选题引力 = 情绪共鸣 × 身份认同 × 现实场景 × 专业背书 × 社交货币。</b>越能在标题里“点名”一种身份或痛点，点击率越高。</li>
+    <li><b>趣味性靠三件套：</b>① 巴纳姆效应（所有标签都正向、都夸你）；② 标签＋夸张有趣的解释；③ 生成可晒的专属海报/报告。</li>
+    <li><b>变现极轻：</b>客单价 1.99–9.9 元，边际成本≈0，靠走量＋复购＋合集打包＋私域＋轻咨询放大。标杆案例：单店 102 天 2.4 万单、9 元 × 6.3 万单、2.98 元 × 4.3 万单。</li>
+    <li><b>蓝海在“新形态”：</b>AI 玄学（面相/塔罗/八字）、亚文化圈层身份（ABO/动物塑）、元测试（朋友圈人设/内容消费人格）目前竞争少、新颖度高。</li>
+  </ul>
+</section>
+
+<!-- 2. 标杆复盘 -->
+<section>
+  <h2><span class="num">2</span>我们参考的“标杆”长什么样</h2>
+  <div class="grid g3">
+    <div class="card">
+      <h4>小红书虚拟测评</h4>
+      <p>心理小测试网页，1.99–9.9 元自动发链接。低粉高变现，粉丝＜1000 也能月入过万。代表：心理画像、恋爱占有欲、SCL-90、MBTI 欺诈、危险人格。</p>
+    </div>
+    <div class="card">
+      <h4>网易系刷屏 H5</h4>
+      <p>荣格人格、哲学气质、使用说明书、性格色彩。套路：经典理论背书＋几十种正面形容词排列组合＋专属海报。靠社交裂变刷屏朋友圈。</p>
+    </div>
+    <div class="card">
+      <h4>网易云年度报告/人格</h4>
+      <p>行为总结类，基于用户真实数据（听歌/颜色/关键词）生成“我是谁”的证据，引发颜色社交与同色人聚集。年度固定刷屏。</p>
+    </div>
+    <div class="card">
+      <h4>AI 玄学（2025 最热）</h4>
+      <p>AI 面相、AI 塔罗、八字/四柱、DeepSeek 算命指令。占卜者月均测算 3.7 次，复购恐怖。韩系 HelloBot/FORCETELLER 半年赚 47 亿韩元。</p>
+    </div>
+    <div class="card">
+      <h4>穿搭五官风格测试</h4>
+      <p>“盐系/甜系/辣系/苦系”按五官打分。小红书爆款，可带货穿搭。衍生：老钱风适配度、清冷感指数、命定穿搭风格。</p>
+    </div>
+    <div class="card">
+      <h4>韩系人格测试生态</h4>
+      <p>MBTI → Teto-Egen → SBTI → 依恋人格 → HSP/ADHD。工具每几年换一代，但“我是谁/怎么快速介绍自己”的需求永恒。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. 用户画像 -->
+<section>
+  <h2><span class="num">3</span>它们的用户画像（你要讨好的人）</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h4>人口属性</h4>
+      <p><span class="pill p-blue">年龄 18–35</span><span class="pill p-blue">核心 20–30</span><span class="pill p-red">女性为主</span><span class="pill p-violet">都市</span></p>
+      <p>身份高度重叠于：<b>大学生、职场新人、单身/恋爱中人群、内耗青年、副业探索者</b>。小红书主力就是年轻女性＋职场新人＋单身恋爱群体。</p>
+    </div>
+    <div class="card">
+      <h4>心理动机</h4>
+      <p><span class="pill p-green">自我探索</span><span class="pill p-amber">寻求被理解</span><span class="pill p-red">身份确认</span><span class="pill p-violet">社交破冰</span></p>
+      <p>白天正常、晚上内耗；敏感、缺安全感、对未来迷茫。他们需要一个“看似科学”的东西告诉自己：你没问题，你很棒，你这样是正常的。</p>
+    </div>
+    <div class="card">
+      <h4>消费行为</h4>
+      <p><span class="pill p-blue">低客单冲动</span><span class="pill p-green">为情绪买单</span><span class="pill p-amber">爱复购</span></p>
+      <p>一杯奶茶钱闭眼下单，不为专业报告，为“短暂释怀”。测完一个常想“那我另一个维度呢”，天然带来复购与合集。</p>
+    </div>
+    <div class="card">
+      <h4>传播行为</h4>
+      <p><span class="pill p-red">爱晒</span><span class="pill p-violet">爱@朋友</span><span class="pill p-blue">爱对号入座</span></p>
+      <p>测完把结果图发朋友圈/闺蜜群＝免费推广。测试结果越“像在说我”、越正面、越有梗，越愿意转发。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. 选题引力公式 -->
+<section>
+  <h2><span class="num">4</span>选题吸引力公式</h2>
+  <div class="formula">
+    <span class="node">情绪共鸣</span><span class="arrow">×</span>
+    <span class="node">身份认同</span><span class="arrow">×</span>
+    <span class="node">现实场景</span><span class="arrow">×</span>
+    <span class="node">专业背书</span><span class="arrow">×</span>
+    <span class="node">社交货币</span>
+  </div>
+  <ul>
+    <li><b>情绪共鸣：</b>焦虑、压力、敏感、拖延、内耗、自卑、孤独——题目一出来就让人“被说中”。</li>
+    <li><b>身份认同：</b>标题带身份词（职场新人/INFJ/敏感女孩/打工人/单身狗）点击率显著更高。</li>
+    <li><b>现实场景：</b>职场晋升、亲密关系、亲子沟通、社交恐惧、选专业——长期高频痛点。</li>
+    <li><b>专业背书：</b>荣格、MBTI、大五人格、哲学主义、SCL-90、五行八字——让用户觉得“不是瞎编的”。</li>
+    <li><b>社交货币：</b>结果能当谈资、破冰、人设表达（“我是 i 人”“我是甜系长相”），才有转发。</li>
+    <li><b>反差惊喜：</b>心理年龄 11 岁 vs 实际 22 岁、外表冷静内心炸裂——反差感驱动分享。</li>
+  </ul>
+</section>
+
+<!-- 5. 趣味性机制 -->
+<section>
+  <h2><span class="num">5</span>趣味性机制（为什么好玩、愿意转发）</h2>
+  <div class="grid g2">
+    <div class="card"><h4>① 巴纳姆效应</h4><p>所有标签都正向、都夸你。“谁会拒绝被人夸奖呢？”——这是 MBTI 能成社交货币的根本。</p></div>
+    <div class="card"><h4>② 标签＋夸张解释</h4><p>“城市诗人＝白天上班很要强，晚上只想看雪看月亮”。俏皮、有画面、适合截图。</p></div>
+    <div class="card"><h4>③ 专属海报/报告</h4><p>生成带用户标签的精美海报，是核心裂变点。虚荣心＋自怜情绪＝转发。</p></div>
+    <div class="card"><h4>④ 低参与成本</h4><p>4–10 题、3 分钟内完成。屏数越少流失越低，思考成本越低越好。</p></div>
+    <div class="card"><h4>⑤ 好奇心驱动</h4><p>“我到底是什么人？”是天生刚需。越像定制、越像懂你，越愿意付小钱。</p></div>
+    <div class="card"><h4>⑥ 互动/剧情/双人</h4><p>剧情式（把题嵌进故事）、双人互动（情侣默契）、短视频交互，沉浸感更强。</p></div>
+  </div>
+</section>
+
+<!-- 6. 变现模型 -->
+<section>
+  <h2><span class="num">6</span>变现模型（轻到什么程度）</h2>
+  <div class="kpi">
+    <div class="box"><div class="big">1.99–9.9</div><div class="small">客单价区间（元）</div></div>
+    <div class="box"><div class="big">≈0</div><div class="small">边际成本</div></div>
+    <div class="box"><div class="big">2.4万</div><div class="small">标杆单店102天单量</div></div>
+    <div class="box"><div class="big">3.7次/月</div><div class="small">玄学类复购频次</div></div>
+  </div>
+  <ul>
+    <li><b>变现层次：</b>低价单品走量 → 合集打包（19.9–29.9）→ 私域复利 → 轻咨询（几十元/次）。</li>
+    <li><b>交付形态：</b>自测网页/小程序/H5，下单自动发链接＋PDF/图文报告，全程无人值守。</li>
+    <li><b>引流：</b>小红书矩阵笔记（封面痛点大字报＋题目截图＋“完整报告在商品卡”），晚上 8:30–10:00 发布转化高。</li>
+    <li><b>合规红线：</b>标注“娱乐测试/趣味探索”，不说“100%准确/科学认证”；不碰医疗诊断、政治、宗教；AI 配图原创避免侵权。</li>
+  </ul>
+</section>
+
+<!-- 7. 创意选题库 -->
+<section>
+  <h2><span class="num">7</span>发散创意选题库（你能做的）</h2>
+  <p class="lead">每个选题按 6 要素拆解：钩子 / 趣味机制 / 目标人群 / 传播卖点 / 变现潜力。标记 <span class="best">蓝海</span> 的目前竞争少、新颖度高。</p>
+
+  <h3>A. 自我探索新角度（跳出 MBTI 拥挤赛道）</h3>
+  <div class="grid g2">
+    <div class="idea">
+      <div class="name">A1 内在小孩原型测试 <span class="pill p-green">治愈</span></div>
+      <div class="row"><b>钩子：</b>“你心里还住着几岁的自己？”</div>
+      <div class="row"><b>趣味：</b>荣格原型（疗愈者/顽童/智者），叙事式“遇见内在小孩”。</div>
+      <div class="row"><b>人群：</b>内耗青年、心理学爱好者。</div>
+      <div class="row"><b>传播：</b>治愈感强，易截图分享。</div>
+      <div class="row"><b>变现：</b>高（可接治愈课程/社群）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">A2 隐藏人格阴影 <span class="pill p-red">已验证热</span></div>
+      <div class="row"><b>钩子：</b>“你不敢承认的那一面是什么？”</div>
+      <div class="row"><b>趣味：</b>阴影人格/暗黑三联，反差感强。</div>
+      <div class="row"><b>人群：</b>年轻女性（爱“危险人格”）。</div>
+      <div class="row"><b>传播：</b>猎奇＋对号入座。</div>
+      <div class="row"><b>变现：</b>极高（小红书已爆卖）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">A3 你的数字分身 / AI 人格 <span class="pill p-violet">蓝海</span></div>
+      <div class="row"><b>钩子：</b>“如果把你训练成 AI，你会是哪个 Agent？”</div>
+      <div class="row"><b>趣味：</b>AI 时代身份映射，生成专属 AI 人设卡。</div>
+      <div class="row"><b>人群：</b>科技敏感年轻人。</div>
+      <div class="row"><b>传播：</b>新鲜感强，适合科技圈破圈。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">A4 你的灵魂配方 / 精神内核</div>
+      <div class="row"><b>钩子：</b>“把你拆成 3 种元素，你的灵魂由什么构成？”</div>
+      <div class="row"><b>趣味：</b>成分百分比雷达图（如 30% 理想主义＋40% 钝感力）。</div>
+      <div class="row"><b>人群：</b>文艺青年。</div>
+      <div class="row"><b>传播：</b>可视化好看，爱晒。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">A5 反差人格（公开 vs 私下）</div>
+      <div class="row"><b>钩子：</b>“朋友圈的你和真实的你差几个量级？”</div>
+      <div class="row"><b>趣味：</b>公开人格 vs 私下人格对比报告。</div>
+      <div class="row"><b>人群：</b>社媒重度用户。</div>
+      <div class="row"><b>传播：</b>强社交货币，爱@朋友比。</div>
+      <div class="row"><b>变现：</b>高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">A6 你的 MBTI 伪装指数 <span class="pill p-blue">蹭流量</span></div>
+      <div class="row"><b>钩子：</b>“你伪装得最深的 MBTI 维度是哪个？”</div>
+      <div class="row"><b>趣味：</b>MBTI 变体，蹭巨大存量流量。</div>
+      <div class="row"><b>人群：</b>MBTI 圈层。</div>
+      <div class="row"><b>传播：</b>蹭话题，低门槛。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+  </div>
+
+  <h3>B. 关系与社交（婚恋刚需，变现最稳）</h3>
+  <div class="grid g2">
+    <div class="idea">
+      <div class="name">B1 恋爱依恋类型 <span class="pill p-red">刚需</span></div>
+      <div class="row"><b>钩子：</b>“你为什么总在感情里没安全感？”</div>
+      <div class="row"><b>趣味：</b>焦虑型/回避型/安全型，解释你们为何合不来。</div>
+      <div class="row"><b>人群：</b>单身恋爱群体。</div>
+      <div class="row"><b>传播：</b>痛点共鸣，易转发给对象。</div>
+      <div class="row"><b>变现：</b>极高（婚恋刚需）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">B2 情侣契合度 / 占有欲（双人）</div>
+      <div class="row"><b>钩子：</b>“你们是互相滋养还是彼此消耗？”</div>
+      <div class="row"><b>趣味：</b>双人互动，生成关系报告（已验证 RPI 热卖）。</div>
+      <div class="row"><b>人群：</b>恋爱中人群。</div>
+      <div class="row"><b>传播：</b>情侣互测，强裂变。</div>
+      <div class="row"><b>变现：</b>高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">B3 你是哪种朋友 / 友情匹配</div>
+      <div class="row"><b>钩子：</b>“你在朋友堆里其实是哪种角色？”</div>
+      <div class="row"><b>趣味：</b>捧场王/树洞型/毒舌型，朋友间互测。</div>
+      <div class="row"><b>人群：</b>泛年轻群体。</div>
+      <div class="row"><b>传播：</b>朋友间分享。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">B4 你的吵架 / 沟通风格</div>
+      <div class="row"><b>钩子：</b>“一吵架你就变哪种人？”</div>
+      <div class="row"><b>趣味：</b>冷战型/升华型/翻旧账型＋相处建议。</div>
+      <div class="row"><b>人群：</b>所有恋爱/社交人群。</div>
+      <div class="row"><b>传播：</b>极易共鸣转发。</div>
+      <div class="row"><b>变现：</b>高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">B5 社交面具指数 / 社恐充电指南</div>
+      <div class="row"><b>钩子：</b>“你每天出门戴几层面具？”</div>
+      <div class="row"><b>趣味：</b>社交能耗测评＋回血指南。</div>
+      <div class="row"><b>人群：</b>社恐/打工人。</div>
+      <div class="row"><b>传播：</b>共鸣强。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+  </div>
+
+  <h3>C. 职场与搞钱</h3>
+  <div class="grid g2">
+    <div class="idea">
+      <div class="name">C1 你的职场生存原型</div>
+      <div class="row"><b>钩子：</b>“你在公司是哪种隐藏角色？”</div>
+      <div class="row"><b>趣味：</b>卷王/摸鱼哲学家/背锅侠/隐形 MVP，打工人嘴替。</div>
+      <div class="row"><b>人群：</b>打工人。</div>
+      <div class="row"><b>传播：</b>强转发，职场共鸣。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">C2 你的搞钱人格 / 财富脚本 <span class="pill p-amber">副业热</span></div>
+      <div class="row"><b>钩子：</b>“你骨子里是哪种赚钱体质？”</div>
+      <div class="row"><b>趣味：</b>赌徒型/囤积型/手艺型/躺赢型＋搞钱建议。</div>
+      <div class="row"><b>人群：</b>副业青年。</div>
+      <div class="row"><b>传播：</b>搞钱话题自带流量。</div>
+      <div class="row"><b>变现：</b>高（可接理财/课程）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">C3 你适合什么专业 / 灵魂职业</div>
+      <div class="row"><b>钩子：</b>“如果能重选一次，你最适合学什么？”</div>
+      <div class="row"><b>趣味：</b>结合高考/转行节点。</div>
+      <div class="row"><b>人群：</b>高考生/转行族。</div>
+      <div class="row"><b>传播：</b>节点性强，季节性爆。</div>
+      <div class="row"><b>变现：</b>中。</div>
+    </div>
+    <div class="idea">
+      <div class="name">C4 你的 burnout 距离 / 内卷耐受度</div>
+      <div class="row"><b>钩子：</b>“你离崩溃还有几步？”</div>
+      <div class="row"><b>趣味：</b>职场能量测评＋自救指南。</div>
+      <div class="row"><b>人群：</b>职场新人。</div>
+      <div class="row"><b>传播：</b>痛点共鸣。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">C5 你的创业适配人格</div>
+      <div class="row"><b>钩子：</b>“你是天生的老板还是顶级打工人？”</div>
+      <div class="row"><b>趣味：</b>创业者画像＋风险提醒。</div>
+      <div class="row"><b>人群：</b>想创业者。</div>
+      <div class="row"><b>传播：</b>创业话题。</div>
+      <div class="row"><b>变现：</b>中。</div>
+    </div>
+  </div>
+
+  <h3>D. 颜值 / 穿搭 / 生活方式（可带货，变现叠加）</h3>
+  <div class="grid g2">
+    <div class="idea">
+      <div class="name">D1 五官风格派系（盐/甜/辣/苦）升级版</div>
+      <div class="row"><b>钩子：</b>“你是盐系、甜系、辣系还是苦系？”</div>
+      <div class="row"><b>趣味：</b>按五官打分定位，可衍生“老钱风适配度/清冷感指数”。</div>
+      <div class="row"><b>人群：</b>女性。</div>
+      <div class="row"><b>传播：</b>已验证爆款，自带明星参考。</div>
+      <div class="row"><b>变现：</b>高（可穿搭带货）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">D2 你的命定穿搭风格</div>
+      <div class="row"><b>钩子：</b>“根据长相身材，你最该扔掉哪种风格？”</div>
+      <div class="row"><b>趣味：</b>给出具体风格＋明星参考＋避雷。</div>
+      <div class="row"><b>人群：</b>女性。</div>
+      <div class="row"><b>传播：</b>实用＋可晒。</div>
+      <div class="row"><b>变现：</b>高（穿搭带货）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">D3 你的专属能量色 / 幸运色</div>
+      <div class="row"><b>钩子：</b>“哪种颜色在偷偷护着你？”</div>
+      <div class="row"><b>趣味：</b>色彩心理＋生成色卡。</div>
+      <div class="row"><b>人群：</b>爱美女性。</div>
+      <div class="row"><b>传播：</b>视觉好看，易晒。</div>
+      <div class="row"><b>变现：</b>中（可接周边）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">D4 你的咖啡 / 茶饮人格</div>
+      <div class="row"><b>钩子：</b>“你像哪种咖啡？”</div>
+      <div class="row"><b>趣味：</b>生活方式标签，品牌联名友好。</div>
+      <div class="row"><b>人群：</b>都市青年。</div>
+      <div class="row"><b>传播：</b>轻话题，品牌合作空间大。</div>
+      <div class="row"><b>变现：</b>中（品牌合作）。</div>
+    </div>
+  </div>
+
+  <h3>E. AI 玄学 / 命理新形态（<span class="best">蓝海</span>，2025 最热、复购最猛）</h3>
+  <div class="grid g2">
+    <div class="idea">
+      <div class="name">E1 AI 面相 / 看手相</div>
+      <div class="row"><b>钩子：</b>“上传一张照片，AI 读出你的人生剧本。”</div>
+      <div class="row"><b>趣味：</b>科技感＋玄学，生成分析报告。</div>
+      <div class="row"><b>人群：</b>好奇泛人群。</div>
+      <div class="row"><b>传播：</b>猎奇强，易刷屏。</div>
+      <div class="row"><b>变现：</b>极高（复购 3.7 次/月，注意合规）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">E2 AI 塔罗 / 每日运势 <span class="pill p-violet">订阅</span></div>
+      <div class="row"><b>钩子：</b>“今天该不该表白？问问 AI 塔罗。”</div>
+      <div class="row"><b>趣味：</b>对话式，每日可测，可做订阅。</div>
+      <div class="row"><b>人群：</b>占星/玄学少女。</div>
+      <div class="row"><b>传播：</b>高频使用，天然复购。</div>
+      <div class="row"><b>变现：</b>极高（订阅制）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">E3 你的八字 / 四柱解读（中式出海）</div>
+      <div class="row"><b>钩子：</b>“你的命盘里藏着什么天赋？”</div>
+      <div class="row"><b>趣味：</b>传统文化＋AI，国风/出海双市场。</div>
+      <div class="row"><b>人群：</b>国风青年/海外华语圈。</div>
+      <div class="row"><b>传播：</b>文化认同强。</div>
+      <div class="row"><b>变现：</b>高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">E4 你的周易卦象 / 今日一卦</div>
+      <div class="row"><b>钩子：</b>“摇一卦，看看这个月水逆怎么破。”</div>
+      <div class="row"><b>趣味：</b>互动摇卦＋解读，节点（水逆/考试）爆发。</div>
+      <div class="row"><b>人群：</b>泛玄学用户。</div>
+      <div class="row"><b>传播：</b>节点性强。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+  </div>
+
+  <h3>F. 亚文化 / 圈层身份（<span class="best">蓝海</span>，圈层狂热、传播炸）</h3>
+  <div class="grid g2">
+    <div class="idea">
+      <div class="name">F1 你的 ABO 信息素 / 第二性别</div>
+      <div class="row"><b>钩子：</b>“你的信息素是什么味道？”</div>
+      <div class="row"><b>趣味：</b>耽美圈语境，12 种结果＋配对。</div>
+      <div class="row"><b>人群：</b>BL/同人女。</div>
+      <div class="row"><b>传播：</b>圈层狂热，自发扩散。</div>
+      <div class="row"><b>变现：</b>极高（圈层付费意愿强）。</div>
+    </div>
+    <div class="idea">
+      <div class="name">F2 你是哪种动物塑</div>
+      <div class="row"><b>钩子：</b>“你其实是一只___。”</div>
+      <div class="row"><b>趣味：</b>可爱动物映射，超强分享。</div>
+      <div class="row"><b>人群：</b>Z 世代。</div>
+      <div class="row"><b>传播：</b>萌系传播，截图率高。</div>
+      <div class="row"><b>变现：</b>高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">F3 你是哪种蛋糕 / 水果 / 植物</div>
+      <div class="row"><b>钩子：</b>“用甜点定义你的人格。”</div>
+      <div class="row"><b>趣味：</b>美味隐喻（职场版已火）。</div>
+      <div class="row"><b>人群：</b>年轻女性。</div>
+      <div class="row"><b>传播：</b>可爱截图。</div>
+      <div class="row"><b>变现：</b>高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">F4 你的游戏 / 二次元人格</div>
+      <div class="row"><b>钩子：</b>“你在游戏里注定是哪个职业？”</div>
+      <div class="row"><b>趣味：</b>游戏圈身份映射。</div>
+      <div class="row"><b>人群：</b>玩家。</div>
+      <div class="row"><b>传播：</b>圈层强。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">F5 你的嗑 CP 体质 / 饭圈人格</div>
+      <div class="row"><b>钩子：</b>“你是哪种嗑 CP 体质？”</div>
+      <div class="row"><b>趣味：</b>饭圈语境，强身份认同。</div>
+      <div class="row"><b>人群：</b>追星女孩。</div>
+      <div class="row"><b>传播：</b>圈层裂变。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+  </div>
+
+  <h3>G. 健康 / 身体 / 能量</h3>
+  <div class="grid g2">
+    <div class="idea">
+      <div class="name">G1 你的睡眠人格 / 熬夜类型</div>
+      <div class="row"><b>钩子：</b>“你为什么睡不着？”</div>
+      <div class="row"><b>趣味：</b>睡眠画像＋改善建议。</div>
+      <div class="row"><b>人群：</b>熬夜党（全民）。</div>
+      <div class="row"><b>传播：</b>全民痛点。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">G2 你的能量恢复方式</div>
+      <div class="row"><b>钩子：</b>“你是靠独处还是狂欢回血？”</div>
+      <div class="row"><b>趣味：</b>内向/外向充电模式。</div>
+      <div class="row"><b>人群：</b>泛年轻。</div>
+      <div class="row"><b>传播：</b>自我认知。</div>
+      <div class="row"><b>变现：</b>中。</div>
+    </div>
+    <div class="idea">
+      <div class="name">G3 你的体型自信指数（正向）</div>
+      <div class="row"><b>钩子：</b>“你对自己的身体误会多深？”</div>
+      <div class="row"><b>趣味：</b>Body Positive 正向安抚。</div>
+      <div class="row"><b>人群：</b>女性。</div>
+      <div class="row"><b>传播：</b>治愈共鸣。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+  </div>
+
+  <h3>H. 元测试 / 社交媒介自我（<span class="best">蓝海</span>，反讽自嘲、极易爆）</h3>
+  <div class="grid g2">
+    <div class="idea">
+      <div class="name">H1 你的朋友圈人设</div>
+      <div class="row"><b>钩子：</b>“你的朋友圈把自己包装成了哪种人？”</div>
+      <div class="row"><b>趣味：</b>反讽＋自嘲，强社交货币。</div>
+      <div class="row"><b>人群：</b>社媒用户。</div>
+      <div class="row"><b>传播：</b>极易爆，可@朋友。</div>
+      <div class="row"><b>变现：</b>高。</div>
+    </div>
+    <div class="idea">
+      <div class="name">H2 你的内容消费人格</div>
+      <div class="row"><b>钩子：</b>“算法把你喂成了哪种人？”</div>
+      <div class="row"><b>趣味：</b>刷什么上瘾（短视频/八卦/知识）。</div>
+      <div class="row"><b>人群：</b>网民。</div>
+      <div class="row"><b>传播：</b>元话题共鸣。</div>
+      <div class="row"><b>变现：</b>中高。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. 评估与推荐 -->
+<section>
+  <h2><span class="num">8</span>选题评估打分卡 & 推荐组合</h2>
+  <p class="lead">用 6 个维度给每个选题打分（1–5），总分越高越值得优先做。下方给出三类起步组合。</p>
+  <table>
+    <thead>
+      <tr><th>评估维度</th><th>含义</th><th>高分的题长这样</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>受众广度</td><td>能破圈到多少人</td><td>全民痛点（睡眠/吵架/搞钱）＞ 圈层（ABO）</td></tr>
+      <tr><td>情绪强度</td><td>戳得多深</td><td>焦虑/恋爱/内耗 ＞ 轻度趣味</td></tr>
+      <tr><td>可分享性</td><td>结果多想晒</td><td>有梗/正面/可视化海报 ＞ 纯文字</td></tr>
+      <tr><td>背书易得性</td><td>理论是否现成</td><td>心理学量表/五行/荣格 ＞ 自创无依据</td></tr>
+      <tr><td>可执行度</td><td>多快能做出来</td><td>网页自测站 ＞ 需大数据的行为盘点</td></tr>
+      <tr><td>复购潜力</td><td>能不能再做新的</td><td>玄学/系列人格 ＞ 一次性</td></tr>
+    </tbody>
+  </table>
+
+  <h3>推荐起步组合</h3>
+  <div class="grid g3">
+    <div class="card">
+      <h4 style="color:var(--accent3)">稳健起步型（风险最低）</h4>
+      <p><b>B1 恋爱依恋</b> + <b>A2 隐藏人格阴影</b> + <b>C1 职场生存原型</b></p>
+      <p>需求已被市场验证，直接照公式做，跑通“建站→小红书笔记→自动发货”闭环即可。</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--accent)">流量进攻型（传播最炸）</h4>
+      <p><b>F1 ABO 信息素</b> + <b>F2 动物塑</b> + <b>A1 内在小孩</b></p>
+      <p>圈层狂热或猎奇驱动，截图率高，适合冲爆款笔记和私域沉淀。</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--accent2)">差异蓝海型（竞争最少）</h4>
+      <p><b>E1 AI 面相</b> + <b>A3 数字分身</b> + <b>H1 朋友圈人设</b></p>
+      <p>新形态、新颖度高，先发优势明显；注意 AI 玄学合规（娱乐声明）。</p>
+    </div>
+  </div>
+  <div class="callout">
+    <b>建议打法：</b>不要只做一个。用“1 个稳健款保底现金流 ＋ 1 个进攻款冲流量 ＋ 1 个蓝海款占位”的组合，配合合集打包（19.9–29.9 元“人格大礼包”）拉高客单价，再用免费小样引流私域做复购。
+  </div>
+</section>
+
+<!-- 9. 落地 -->
+<section>
+  <h2><span class="num">9</span>怎么低成本做出来</h2>
+  <ul>
+    <li><b>形态：</b>自测网页（最轻）→ 微信小程序/H5。8–18 题，3 分钟内做完，结果页生成专属海报＋PDF。</li>
+    <li><b>内容生产：</b>用 AI 批量生成题库＋插画；选题改编自公开心理学量表（大五/依恋/SCL-90 简化版），题干大白话、结果文案温柔治愈＋肯定优点＋委婉短板＋小建议。</li>
+    <li><b>交付：</b>小红书个人售卖功能挂载，下单自动发链接；或小程序自动生成报告。边际成本≈0。</li>
+    <li><b>引流：</b>每天 2–3 篇笔记，封面痛点大字报＋题目截图＋“完整报告在商品卡”；晚上 8:30–10:00 发；话题打长尾词（自我认知/情绪管理）。</li>
+    <li><b>合规：</b>全程标注“娱乐测试/趣味探索”；不碰医疗诊断、政治、宗教；AI 配图原创，避免明星/动漫角色侵权。</li>
+  </ul>
+</section>
+
+<div class="footer">
+  本报告基于公开爆款案例复盘与发散创意推导，仅供选题参考；实际收益因人而异，请结合自身执行与平台规则合规操作。<br>
+  生成日期：2026-10-10 · WorkBuddy 创意分析
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>隐藏天赋实验室 · 测出你被埋没的那块光</title>
+<!-- 后端已切换为同源 Node 服务（server.js），无需 Supabase / 外部 CDN -->
+<style>
+  :root{
+    --bg:#fbf7f2; --card:#ffffff; --ink:#2b2622; --muted:#8a8178;
+    --line:#ece4da; --accent:#e8554e; --soft:#f6efe7;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:540px;margin:0 auto;padding:22px 18px 80px;min-height:100vh}
+  .screen{display:none;animation:fade .45s ease}
+  .screen.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  h1{font-size:25px;line-height:1.4;margin:6px 0 10px;letter-spacing:.5px}
+  h2{font-size:20px;margin:0 0 8px}
+  p{margin:8px 0;color:#4a443e}
+  .sub{color:var(--muted);font-size:14px}
+  .pill{display:inline-block;background:var(--soft);color:#a05a3a;border:1px solid #f0e2d3;
+    font-size:12px;padding:4px 10px;border-radius:999px;margin-bottom:14px}
+  .btn{display:block;width:100%;border:none;border-radius:16px;padding:16px;
+    font-size:17px;font-weight:600;color:#fff;background:var(--accent);cursor:pointer;
+    box-shadow:0 8px 20px rgba(232,85,78,.28);transition:transform .15s,box-shadow .15s}
+  .btn:active{transform:scale(.98)}
+  .btn.ghost{background:#fff;color:var(--accent);border:1.5px solid #f0d8d2;box-shadow:none}
+  .btn:disabled{opacity:.45;box-shadow:none;cursor:not-allowed}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;
+    padding:22px;margin:16px 0;box-shadow:0 4px 18px rgba(60,40,20,.05)}
+
+  /* ===== 密码门 ===== */
+  .brand{font-size:15px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:6px}
+  .gate-card{padding:20px}
+  .gate-card label.lab{font-size:13px;font-weight:700;color:#a05a3a;letter-spacing:.5px}
+  .pw-input{width:100%;margin-top:8px;padding:14px 16px;font-size:17px;border:1.5px solid var(--line);
+    border-radius:14px;background:var(--soft);color:var(--ink);outline:none;transition:border-color .2s}
+  .pw-input:focus{border-color:var(--accent);background:#fff}
+  .pw-err{color:var(--accent);font-size:13.5px;min-height:18px;margin-top:8px}
+  .pw-hint{color:var(--muted);font-size:12.5px;margin-top:4px}
+  .gate-card .btn{margin-top:16px}
+
+  /* ===== 答题 ===== */
+  .quiz-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .backbtn{background:none;border:none;color:var(--accent);font-size:15px;font-weight:600;cursor:pointer;padding:6px 2px}
+  .backbtn:disabled{color:#cbbfb2;cursor:default}
+  .qnum{font-size:13px;color:var(--accent);font-weight:700;letter-spacing:1px}
+  .bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:6px 0 14px}
+  .bar > i{display:block;height:100%;background:linear-gradient(90deg,#f5a04a,#e8554e);width:0;transition:width .35s}
+  .tip{margin:0 0 8px;font-size:13px;color:var(--muted)}
+  .qtext{font-size:19px;font-weight:600;margin:6px 0 18px;line-height:1.5}
+  .opt{display:block;width:100%;text-align:left;background:var(--soft);border:1.5px solid transparent;
+    border-radius:14px;padding:14px 16px;margin:10px 0;font-size:15.5px;color:#3a342e;cursor:pointer;
+    transition:all .18s;line-height:1.5}
+  .opt:active,.opt.sel{background:#fff;border-color:var(--accent);box-shadow:0 4px 14px rgba(232,85,78,.18)}
+  .quiz-nav{margin-top:18px}
+
+  /* ===== 结果 ===== */
+  .tag{font-size:13px;color:var(--muted)}
+  .muted{color:var(--muted);font-size:14px}
+  .dimrow{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:14px}
+  .dimrow .nm{flex:0 0 96px;color:#4a443e}
+  .dimrow .track{flex:1;height:9px;background:var(--line);border-radius:99px;overflow:hidden}
+  .dimrow .track > i{display:block;height:100%;border-radius:99px}
+  .dimrow .val{flex:0 0 34px;text-align:right;color:var(--muted);font-size:12px}
+  .sparks{margin:0;padding-left:0;list-style:none}
+  .sparks li{position:relative;padding:10px 0 10px 26px;border-bottom:1px dashed var(--line);font-size:15px}
+  .sparks li:last-child{border-bottom:none}
+  .sparks li:before{content:"✦";position:absolute;left:0;top:9px;color:var(--accent)}
+  .sec{margin-top:18px}
+  .sec .lab{font-size:13px;font-weight:700;color:#a05a3a;letter-spacing:.5px;margin-bottom:4px}
+  .quote{background:var(--soft);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;
+    padding:12px 14px;margin:10px 0;font-size:15px;color:#4a443e}
+  .theory{font-size:14.5px;color:#4a443e;background:#fcfaf7;border:1px solid var(--line);border-radius:12px;padding:14px}
+  .learn{font-size:14.5px;color:#3a342e;background:#eef6f0;border:1px solid #dcebe1;border-radius:12px;padding:14px}
+  .learn b{color:#1f8a52}
+  .combo{background:linear-gradient(135deg,#fff7f2,#fdeee9);border:1px solid #f6d9cf;border-radius:16px;padding:16px;margin:14px 0}
+  canvas#radar{display:block;margin:10px auto;max-width:300px;width:100%}
+  .poster-wrap{text-align:center;margin:14px 0}
+  canvas#poster{width:100%;max-width:340px;border-radius:18px;box-shadow:0 12px 30px rgba(60,40,20,.18)}
+  #posterImg{display:none;width:100%;max-width:340px;border-radius:18px;margin:10px auto;box-shadow:0 12px 30px rgba(60,40,20,.18)}
+  .foot{text-align:center;color:var(--muted);font-size:12.5px;margin-top:26px;line-height:1.8}
+  .disclaim{font-size:12px;color:var(--muted);background:var(--soft);border-radius:12px;padding:12px;margin-top:10px}
+  .sharebtns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+  .sharebtns .btn{flex:1;min-width:140px}
+  .resbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .resbtns .btn{font-size:15px;padding:14px}
+  .sharedbar{background:#eef4ff;border:1px solid #d6e4ff;color:#2f6fed;border-radius:14px;
+    padding:12px 14px;font-size:14px;margin:0 0 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .sharedbar button{background:#2f6fed;color:#fff;border:none;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .left-note{text-align:center;color:#a05a3a;font-size:13px;margin-top:10px}
+
+  /* ===== 弹窗 / Toast ===== */
+  .modal{display:none;position:fixed;inset:0;z-index:50;align-items:center;justify-content:center;padding:24px}
+  .modal.on{display:flex}
+  .modal-mask{position:absolute;inset:0;background:rgba(40,30,20,.45)}
+  .modal-card{position:relative;background:#fff;border-radius:22px;padding:26px 22px;max-width:380px;width:100%;
+    text-align:center;box-shadow:0 20px 60px rgba(40,30,20,.3);animation:pop .25s ease}
+  @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+  .modal-x{position:absolute;top:12px;right:16px;border:none;background:none;font-size:26px;color:#bbb;cursor:pointer;line-height:1}
+  .modal-emoji{font-size:46px}
+  .review-steps{text-align:left;margin:14px 0;font-size:15px}
+  .review-steps > div{padding:9px 0;border-bottom:1px dashed var(--line)}
+  .review-steps > div:last-child{border-bottom:none}
+  .kf{background:var(--soft);border-radius:12px;padding:12px;font-size:15px;margin:10px 0}
+  .kf b{color:var(--accent)}
+  .modal-card .btn{margin-top:14px}
+  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:rgba(43,38,34,.92);color:#fff;
+    padding:12px 20px;border-radius:999px;font-size:14px;z-index:80;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;max-width:90%;text-align:center}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(-6px)}
+
+  @media (max-width:380px){
+    h1{font-size:22px}
+    .qtext{font-size:17px}
+    .opt{font-size:14.5px;padding:13px 14px}
+    .resbtns{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== 密码门 ===== -->
+  <section class="screen on" id="s_gate">
+    <div class="brand">🔮 隐藏天赋实验室</div>
+    <h1>输入测试密码<br>开启你的天赋探索</h1>
+    <p class="sub">每个密码可测试 3 次 · 仅供本人使用</p>
+    <div class="card gate-card">
+      <label class="lab">测试密码</label>
+      <input class="pw-input" id="pwInput" type="text" inputmode="text" placeholder="请输入密码，如 TALENT2026" autocomplete="off">
+      <div class="pw-err" id="pwErr"></div>
+      <div class="pw-hint" id="pwHint">购买 / 领取后获得的密码，形如 TALENT2026</div>
+      <button class="btn" id="pwBtn" onclick="tryUnlock()">开始测试 →</button>
+    </div>
+    <div class="disclaim">本测试用于自我探索与趣味娱乐，结果非专业心理诊断。基于加德纳 · 多元智能理论。</div>
+    <div style="text-align:center;margin-top:14px"><a href="admin.html" style="color:#b9ad9f;font-size:12px;text-decoration:none">商家 · 密码管理入口</a></div>
+  </section>
+
+  <!-- ===== 答题 ===== -->
+  <section class="screen" id="s_quiz">
+    <div class="quiz-top">
+      <button class="backbtn" id="backBtn" onclick="goBack()" disabled>‹ 上一题</button>
+      <span class="qnum" id="qnum">Q1 / 16</span>
+    </div>
+    <div class="bar"><i id="prog"></i></div>
+    <p class="tip">凭直觉选最像你的，没有完美符合就选最接近的 👌</p>
+    <div class="qtext" id="qtext"></div>
+    <div id="opts"></div>
+    <div class="quiz-nav">
+      <button class="btn" id="nextBtn" onclick="goNext()" disabled style="opacity:.45">下一题 →</button>
+    </div>
+  </section>
+
+  <!-- ===== 结果 ===== -->
+  <section class="screen" id="s_res">
+    <div id="sharedBar" class="sharedbar" style="display:none">
+      <span>你正在看别人分享的结果，想测自己的？</span>
+      <button onclick="takeMine()">测我自己 →</button>
+    </div>
+    <div style="text-align:center">
+      <div class="pill">你的隐藏天赋类型</div>
+      <h1 id="resTitle" style="margin:0"></h1>
+      <p class="sub" id="resOne"></p>
+    </div>
+    <div class="card" style="text-align:center">
+      <canvas id="radar" width="600" height="600"></canvas>
+      <p class="muted" style="margin:4px 0 0">你的 8 维天赋分布（越外圈越突出）</p>
+    </div>
+    <div class="card">
+      <div class="sec"><div class="lab">你以为的自己</div><div class="quote" id="resThink"></div></div>
+      <div class="sec"><div class="lab">你其实拥有</div><div class="quote" id="resActually" style="border-left-color:#1f8a52;background:#eef6f0"></div></div>
+      <div class="sec"><div class="lab">你的 3 个隐藏闪光点</div><ul class="sparks" id="resSparks"></ul></div>
+    </div>
+    <div class="card">
+      <div class="lab" style="font-size:13px;font-weight:700;color:#a05a3a;letter-spacing:.5px">理论依据</div>
+      <div class="theory" id="resTheory"></div>
+      <div class="sec"><div class="lab">你没意识到的超能力</div><p id="resSuper" style="margin:0"></p></div>
+      <div class="sec"><div class="lab">一个能学到的新东西</div><div class="learn" id="resLearn"></div></div>
+      <div class="sec"><div class="lab">适合发力的方向</div><p id="resDir" class="muted" style="margin:0"></p></div>
+    </div>
+    <div class="combo" id="resCombo"></div>
+    <div class="card">
+      <div class="lab" style="font-size:13px;font-weight:700;color:#a05a3a;letter-spacing:.5px;margin-bottom:6px">被你忽略的另一面</div>
+      <p id="resLow" style="margin:0;font-size:14.5px"></p>
+    </div>
+
+    <div class="poster-wrap">
+      <canvas id="poster" width="750" height="1334"></canvas>
+      <img id="posterImg" alt="我的隐藏天赋结果图">
+    </div>
+
+    <div class="resbtns">
+      <button class="btn" onclick="saveResult()">💾 保存结果大图</button>
+      <button class="btn ghost" onclick="copyLink()">🔗 复制结果链接</button>
+      <button class="btn ghost" onclick="retest()">🔄 再测一次</button>
+      <button class="btn ghost" onclick="openReview()">🎁 好评有礼</button>
+    </div>
+    <div class="left-note" id="leftNote"></div>
+    <div class="foot">
+      把结果发朋友圈 / 发给朋友，顺便问问 TA 的天赋是什么 👀<br>
+      你不是没有特长，是你那块智能，还没被认真看见过。
+    </div>
+  </section>
+
+</div>
+
+<!-- ===== 好评有礼弹窗 ===== -->
+<div class="modal" id="reviewModal">
+  <div class="modal-mask" onclick="closeReview()"></div>
+  <div class="modal-card">
+    <button class="modal-x" onclick="closeReview()">×</button>
+    <div class="modal-emoji">🎁</div>
+    <h2>好评有礼 · 返现 1 元</h2>
+    <p style="margin-top:4px">感谢你愿意为小店说句好话 🥰</p>
+    <div class="review-steps">
+      <div>1️⃣ 在店铺 / 商品页给一个 <b>五星好评</b></div>
+      <div>2️⃣ 截图保存你的好评页面</div>
+      <div>3️⃣ 联系客服，发送好评截图</div>
+      <div>4️⃣ 客服核对后，<b>立返 1 元</b> 到账 💰</div>
+    </div>
+    <div class="kf">📮 联系客服：在店铺 / 商品页找到客服入口，发送好评截图即可</div>
+    <p class="muted" style="font-size:12.5px;margin:4px 0 0">活动限每人一次 · 最终解释权归本店所有</p>
+    <button class="btn" onclick="closeReview()">我知道啦</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============== 后端配置（同源 Node 服务，无需额外配置） ============== */
+const SB = (window.SB_CONFIG && window.SB_CONFIG.URL && !String(window.SB_CONFIG.URL).startsWith('__SB')) ? window.SB_CONFIG : null;
+const _sb = (SB && window.supabase) ? window.supabase.createClient(SB.URL, SB.ANON) : null;
+
+/* ============== 维度元数据 ============== */
+const DIMS = {
+  linguistic:    {name:'语言智能', code:'文字捕手', icon:'✍️', color:'#e8554e',
+    one:"你天生能'把说不清的感觉，说清楚'。",
+    think:"你觉得自己就是话多、爱发朋友圈，不算什么本事。",
+    actual:"你拥有把模糊情绪变成精准语言的能力——这是极少数人能稳定做到的。",
+    sparks:["你总能在别人卡壳时，一句话点破'对，我就是这种感觉'",
+            "你写的吐槽、文案、祝福，常常被人截图收藏",
+            "你特别会'翻译'——把专业人士的术语，讲给外行也能听懂"],
+    theory:"语言智能，是对'词序与音韵的敏感度，以及运用语言达成目标的能力'（加德纳，1983）。从进化看，人类是唯一发展出复杂符号系统的物种，语言智能本质是'用符号影响他人'的生存优势；脑科学上主要由左半球布洛卡区与韦尼克区支撑。",
+    super:"你能用语言给他人'命名情绪'——很多人一生都没被准确描述过自己的感受，你做到了。",
+    learn:"冷知识：所谓'情商高'，很大一部分其实是'语言智能 + 人际智能'的组合——不是让你少说话，而是让你说的话，刚好落在对方心上。",
+    dir:"写作 · 内容创作 · 培训 · 品牌文案 · 脱口秀 · 咨询沟通",
+    asSec:"作为辅助，你的表达会为任何天赋加分——再厉害的洞察，经你一描述就传得开。"},
+  logical:       {name:'逻辑数学智能', code:'解密者', icon:'🔍', color:'#2f6fed',
+    one:"你看到混乱，脑子里自动开始画流程图。",
+    think:"你觉得自己就是爱较真、抠细节，有点无趣。",
+    actual:"你拥有在信息噪音里快速找到'关键变量'的天赋，这是稀缺的底层能力。",
+    sparks:["别人还在纠结'怎么办'，你已经拆出了问题的三层结构",
+            "你买东西比参数、看逻辑，很少被营销带偏",
+            "你特别擅长在争论中'还原事实'，而不是升级情绪"],
+    theory:"逻辑数学智能是对'逻辑、模式、因果、数量'的敏感度。加德纳认为它不仅是算数，更是'科学思维'的核心；神经上依赖前额叶的执行功能与顶叶的空间-数量加工。进化上，因果推理让我们避开了无数危险。",
+    super:"你能在群体恐慌、信息轰炸时保持'第一性原理'思考——别人跟着情绪走，你跟着逻辑走。",
+    learn:"冷知识：所谓'直觉准'的人，很多其实是逻辑智能在后台高速运行——他们把过去的模式默默压缩成了'感觉'，并不是真的靠蒙。",
+    dir:"产品 · 分析 · 编程 · 投资 · 咨询 · 运营策略 · 科研",
+    asSec:"作为辅助，你做任何事都有'底层逻辑'，不容易被表象带跑。"},
+  spatial:       {name:'空间智能', code:'造梦师', icon:'🎨', color:'#8b5cf6',
+    one:"你闭着眼也能在脑子里'盖房子、排路线、布画面'。",
+    think:"你觉得自己就是路痴绝缘体、爱拍照，没啥特别。",
+    actual:"你拥有在脑中操纵图像与空间关系的能力，设计师、导演、建筑师都靠它吃饭。",
+    sparks:["你逛商场不拿地图也不迷路，还能想象家具摆自家啥样",
+            "你对构图、配色、氛围有种本能的挑剔",
+            "你记人先记脸和场景，回忆自带画面感"],
+    theory:"空间智能是'精准知觉视觉-空间世界，并对其进行心智转换'的能力（加德纳）。它在航海、艺术、工程中至关重要；脑科学上主要由右半球顶叶与枕叶支撑，海马体负责建造你脑中的'认知地图'。",
+    super:"你能把抽象的东西'可视化'——开会时你在脑中画结构图，这让你比纯文字思考的人更快抓住全局。",
+    learn:"冷知识：'心理旋转（mental rotation）'能力强的人，不仅方向感好，学几何、读图纸、甚至理解抽象系统都更快——空间智能是很多领域被低估的'通用引擎'。",
+    dir:"设计 · 影视 · 建筑 · UI/UX · 摄影 · 空间规划",
+    asSec:"作为辅助，你给任何事都加了'画面感'，别人更容易跟着你想。"},
+  musical:       {name:'音乐智能', code:'律动者', icon:'🎵', color:'#f59e0b',
+    one:"你的情绪，是被声音和节奏养着的。",
+    think:"你觉得自己只是'爱听歌'，又不搞音乐。",
+    actual:"你对音高、节奏、音色有高于常人的敏感度，这种能力会渗透进你做事的'节奏感'。",
+    sparks:["一首歌你听一遍就能哼出调，甚至听出哪里跑偏",
+            "你做事特别讲究'节奏'——什么时候发力、什么时候收，本能知道",
+            "BGM 一响你就进入状态，音乐是你隐形的能量开关"],
+    theory:"音乐智能是对'音高、节奏、音色'的感知与创造能力。加德纳认为它与语言智能同源（都依赖听觉加工），且是最早发展的智能之一；脑科学上广泛分布于右半球颞叶，音乐家的胼胝体更厚——左右脑协作更强。",
+    super:"你有'节奏智能'——能把混乱的日程、项目排出松紧合理的韵律，这是很多埋头苦干的人欠缺的。",
+    learn:"冷知识：音乐智能和'时间感知''情绪调节'高度相关。会找节奏的人，往往更会调节自己的状态——这不是玄学，是听觉皮层和情绪中枢本就相连。",
+    dir:"音乐 · 内容配乐 · 活动策划 · 音频产品 · 放松疗愈",
+    asSec:"作为辅助，你做事自带节奏，再枯燥的事你也排得有韵律。"},
+  bodily:        {name:'身体运动智能', code:'手艺人', icon:'🤲', color:'#10b981',
+    one:"你的智慧长在身体里，动手比动嘴快。",
+    think:"你觉得自己坐不住、不爱读书，好像不够'聪明'。",
+    actual:"你拥有用身体解决问题、表达、学习的天赋，很多顶尖运动员、外科医生、匠人都靠它。",
+    sparks:["你看一遍就会，身体比脑子先学会（肌肉记忆超强）",
+            "你一紧张就想办法'做点什么'，行动是你解压的方式",
+            "你特别会手作——做饭、修理、手工，做出来的东西有温度"],
+    theory:"身体运动智能是'运用身体表达情绪思想、熟练操控物体'的能力。加德纳强调它常被学校忽视，却是人类最古老的智能之一（狩猎、制作工具）；脑科学由小脑、基底节与运动皮层支撑，且'具身认知'研究证明：身体动作会反向塑造思维。",
+    super:"你是'具身学习者'——别人靠想，你靠做就懂了。很多抽象问题，你一上手反而通了。",
+    learn:"冷知识：'具身认知（embodied cognition）'告诉你，思考不只在脑子里——手势、走动、摆弄物体都会提升创造力。所以你'坐不住'时去走走，不是在偷懒，是在用身体思考。",
+    dir:"手作 · 烹饪 · 运动健身 · 表演 · 技术工种 · 体验式教学",
+    asSec:"作为辅助，你的行动力会补足任何'想得多做得少'的短板。"},
+  interpersonal: {name:'人际智能', code:'读心人', icon:'💞', color:'#ec4899',
+    one:"你对人的情绪和关系，有着雷达一样的灵敏度。",
+    think:"你觉得自己就是爱管闲事、太敏感、老当和事佬。",
+    actual:"你拥有感知他人意图、情绪、关系动态的天赋，这才是真正的'高情商'底层。",
+    sparks:["你进一个房间，三秒就能读出气氛不对",
+            "朋友有事第一个找你，因为你'接得住'",
+            "你特别会调解，两边都能被你说到心服"],
+    theory:"人际智能是'察觉并区分他人情绪、意图、动机'的能力（加德纳），是社会性动物的核心智能。神经科学发现人脑有'镜像神经元'系统，让我们能直接'模拟'他人的感受——你这功能格外发达。",
+    super:"你能在冲突里当'翻译机'——不是和稀泥，而是让双方都觉得'被听懂了'。这是团队里最稀缺的角色。",
+    learn:"冷知识：镜像神经元让你'看见别人疼，自己也会疼'。所以你容易累，不是因为你软弱，是因为你的大脑在替别人实时共情——记得给自己设边界。",
+    dir:"心理咨询 · HR · 销售 · 社群运营 · 管理 · 用户研究",
+    asSec:"作为辅助，你走到哪都能把人聚起来，任何天赋配上你都不孤单。"},
+  intrapersonal: {name:'内省智能', code:'自照者', icon:'🪞', color:'#0ea5e9',
+    one:"你最深的智慧，是把自己看得很清楚。",
+    think:"你觉得自己就是爱独处、想太多、有点丧。",
+    actual:"你拥有觉察自我情绪、动机、价值观的能力，这是所有成长的前提。",
+    sparks:["你迷茫时会自己一层层问到底，而不是到处问别人",
+            "你很知道自己的底线在哪，不容易被带偏",
+            "你能把经历'消化'成经验，而不是反复卡在同一坑"],
+    theory:"内省智能是'接近自己情感生活、区分情绪并用以指导行为'的能力（加德纳），是最私人化却最强大的智能。它与前额叶的'默认模式网络'高度相关——你独处时大脑并非关机，而是在整合自我。",
+    super:"你有'自我纠偏系统'——很多人撞了南墙才知道错，你往往在出发前就嗅到了自己的模式。",
+    learn:"冷知识：心理学发现，'元认知（知道自己在想什么、为什么这么想）'比智商更能预测一个人的长期成就。你天生的自省，其实就是高阶元认知。",
+    dir:"写作 · 心理咨询 · 产品/用户洞察 · 哲学 · 自我管理 · 教练",
+    asSec:"作为辅助，你再往外冲也知道为什么冲，不容易迷失。"},
+  naturalist:    {name:'自然观察智能', code:'万物观察者', icon:'🌿', color:'#65a30d',
+    one:"你对世界的规律、细节、变化，有种本能的捕捉力。",
+    think:"你觉得自己就是爱养花、爱看天，有点'闲'。",
+    actual:"你拥有识别模式、分类自然与系统、察觉微小变化的能力，这是人类祖先活下来的核心本领。",
+    sparks:["你一眼能看出'今天天气不对 / 这盆花缺水了'",
+            "你特别会归类整理，信息到你手里自动成体系",
+            "你在自然里充电最快，城市待久了会'枯萎'"],
+    theory:"自然观察智能是'识别自然与其他物种、区分细节、理解系统'的能力。加德纳在 1995 年正式补充它，源于人类漫长的采集-狩猎史——认得哪种果子有毒、天气怎么变，才能活；脑科学上它与视觉细节加工和系统分类能力相关。",
+    super:"你能在混乱里'看见模式'——市场、关系、数据的趋势，你往往比别人早半步察觉。",
+    learn:"冷知识：现代人大多有'自然缺失症（nature deficit）'，而研究证明，定期接触自然能显著降低焦虑、提升专注。你本能地往自然跑，其实是在做最便宜也最有效的自我修复。",
+    dir:"博物 · 园艺 · 环保 · 数据分析 · 趋势研究 · 户外内容",
+    asSec:"作为辅助，你对趋势和细节的嗅觉，会让任何判断更准。"}
+};
+const ORDER = ['linguistic','logical','spatial','musical','bodily','interpersonal','intrapersonal','naturalist'];
+
+/* ============== 题库（16题，4选项均衡映射8维） ============== */
+const QUIZ = [
+ {q:"半夜突然饿了，你的操作是？",opts:[
+   {t:"💬 在群里发一长段'谁懂啊我也太想吃了'并@全体成员",d:"linguistic"},
+   {t:"🧮 算一下外卖起送价+配送费，凑满减最划算",d:"logical"},
+   {t:"🧭 凭记忆在黑暗里精准摸到零食柜第几格",d:"spatial"},
+   {t:"🤸 直接下床自己煮个面，手比脑子快",d:"bodily"}]},
+ {q:"朋友发了张精修自拍问你好不好看，你？",opts:[
+   {t:"💬 秒回一堆彩虹屁，还精准夸到细节",d:"linguistic"},
+   {t:"💞 先察觉她是不是今天心情不好、在求夸",d:"interpersonal"},
+   {t:"🧭 顺手帮她调了下构图和滤镜",d:"spatial"},
+   {t:"🪞 想了想回'你开心就好，自己觉得美最重要'",d:"intrapersonal"}]},
+ {q:"抢演唱会 / 限量门票，你？",opts:[
+   {t:"🧮 提前研究攻略、多设备同时抢、卡时间点",d:"logical"},
+   {t:"🧭 脑补出现场座位图和动线",d:"spatial"},
+   {t:"💞 拉了群里所有人帮你一起点",d:"interpersonal"},
+   {t:"🎧 其实你是因为真的爱这首歌才抢的",d:"musical"}]},
+ {q:"周末两天假，你的理想状态？",opts:[
+   {t:"🤸 爬山 / 打球 / 折腾手工，动起来才爽",d:"bodily"},
+   {t:"🌿 去公园 / 露营 / 养花，亲近自然回血",d:"naturalist"},
+   {t:"🪞 宅家独处、写写想想，和自己待着",d:"intrapersonal"},
+   {t:"🎧 戴上耳机循环歌单，世界安静了",d:"musical"}]},
+ {q:"群里在抢红包，你？",opts:[
+   {t:"🧮 研究最佳出手时机，手速 + 算法",d:"logical"},
+   {t:"💞 抢完立刻发回去维持气氛",d:"interpersonal"},
+   {t:"🤸 手速党，肌肉记忆点得飞快",d:"bodily"},
+   {t:"💬 抢到最少也要发一句神评论",d:"linguistic"}]},
+ {q:"追一部剧 / 综艺，你最上头的是？",opts:[
+   {t:"🤸 最爱模仿角色动作、跟着比划",d:"bodily"},
+   {t:"💬 记金句、写二创段子、发长评",d:"linguistic"},
+   {t:"🧭 挑运镜 / 美术 / 服化道，很挑剔",d:"spatial"},
+   {t:"🎧 BGM 一响就起鸡皮疙瘩",d:"musical"}]},
+ {q:"过年亲戚盘问'工资多少 / 谈对象没'，你？",opts:[
+   {t:"💬 打太极式回话，把话题绕开还显得乖",d:"linguistic"},
+   {t:"🧮 用数据 + 对比把对方说得心服",d:"logical"},
+   {t:"💞 先共情再反客为主夸亲戚家孩子",d:"interpersonal"},
+   {t:"🪞 内心毫无波澜，左耳进右耳出",d:"intrapersonal"}]},
+ {q:"深夜 emo 时刻，你通常？",opts:[
+   {t:"🪞 自己想明白为啥 emo，写下来",d:"intrapersonal"},
+   {t:"💞 找朋友倾诉，被接住就好",d:"interpersonal"},
+   {t:"🎧 循环一首伤感的歌越听越上头",d:"musical"},
+   {t:"💬 发一条仅自己可见 / 分组可见的朋友圈",d:"linguistic"}]},
+ {q:"点一杯奶茶，你最纠结的是？",opts:[
+   {t:"🧮 热量、糖分、性价比，算半天",d:"logical"},
+   {t:"🧭 杯子的颜值和我今天穿搭搭不搭",d:"spatial"},
+   {t:"🌿 有没有真奶真茶、植脂末避雷",d:"naturalist"},
+   {t:"💬 名字好不好玩、能不能发朋友圈",d:"linguistic"}]},
+ {q:"打游戏 / 组队开黑，你担任？",opts:[
+   {t:"🧭 指挥走位、记地图的战术位",d:"spatial"},
+   {t:"🎧 队里的节奏 / 喊麦担当，带气氛",d:"musical"},
+   {t:"🤸 手速操作怪，微操拉满",d:"bodily"},
+   {t:"🧮 研究出装和版本强势英雄",d:"logical"}]},
+ {q:"朋友让你帮选头像 / 朋友圈封面，你？",opts:[
+   {t:"🧭 一眼指出哪张构图更高级",d:"spatial"},
+   {t:"💬 帮他想要一句绝了的配文",d:"linguistic"},
+   {t:"💞 先问'你想给人什么感觉'再选",d:"interpersonal"},
+   {t:"🪞 觉得'你自己喜欢最重要'",d:"intrapersonal"}]},
+ {q:"旅行做攻略，你？",opts:[
+   {t:"🧮 Excel 拉满，行程精确到分钟",d:"logical"},
+   {t:"🧭 看地图就脑补出路线和机位",d:"spatial"},
+   {t:"🌿 专挑自然风光 / 小众生态路线",d:"naturalist"},
+   {t:"🤸 你把攻略打印贴墙上，动手收拾行李",d:"bodily"}]},
+ {q:"双十一 / 大促，你的状态？",opts:[
+   {t:"🧮 比价凑满减，理性不冲动",d:"logical"},
+   {t:"🤸 熬夜手速抢，抢到就是赚",d:"bodily"},
+   {t:"🌿 只囤天然 / 成分干净的刚需",d:"naturalist"},
+   {t:"🎧 边听歌边剁手，节奏感拉满",d:"musical"}]},
+ {q:"和客服 / 售后斗智斗勇，你？",opts:[
+   {t:"💬 一套话术把对方说到退款",d:"linguistic"},
+   {t:"🧮 列证据链讲规则，不退不罢休",d:"logical"},
+   {t:"💞 先共情再施压，让对方想帮你",d:"interpersonal"},
+   {t:"🪞 觉得麻烦，能忍则忍算了",d:"intrapersonal"}]},
+ {q:"你手机相册里最多的图是？",opts:[
+   {t:"🧭 风景 / 截图 / 排版好看的图",d:"spatial"},
+   {t:"🎧 歌词截图 / 演唱会 / 歌单",d:"musical"},
+   {t:"🌿 花草 / 云 / 猫 / 路边的有趣发现",d:"naturalist"},
+   {t:"💞 聊天记录 / 合照 / 表情包",d:"interpersonal"}]},
+ {q:"你缓解压力的方式是？",opts:[
+   {t:"🤸 运动 / 搞卫生 / 做手工发泄",d:"bodily"},
+   {t:"🎧 听歌 / 哼歌 / 唱歌",d:"musical"},
+   {t:"🪞 冥想 / 写日记 / 和自己聊",d:"intrapersonal"},
+   {t:"🌿 去户外走走、撸猫、看天",d:"naturalist"}]}
+];
+
+/* ============== 状态与流程 ============== */
+let idx=0; let answers=[]; let curPw=null; let sharedView=false; let leftCount=null;
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
+function $(id){return document.getElementById(id);}
+
+/* ---- 初始化：优先解析分享链接 ---- */
+(function init(){
+  const h=location.hash||'';
+  if(h.startsWith('#r=')){
+    try{
+      const json=JSON.parse(decodeURIComponent(escape(atob(h.slice(3)))));
+      sharedView=true;
+      $('sharedBar').style.display='flex';
+      $('leftNote').textContent='';
+      renderResult(json.top, json.sec, json.scores);
+      show('s_res');
+      return;
+    }catch(e){/* 解析失败则走正常流程 */}
+  }
+  sharedView=false;
+  // 回车提交密码
+  $('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')tryUnlock();});
+  show('s_gate');
+})();
+
+/* ---- 密码校验 ---- */
+function setErr(msg){$('pwErr').textContent=msg||'';}
+function tryUnlock(){
+  const pw=$('pwInput').value.trim();
+  if(!pw){setErr('请输入测试密码');return;}
+  setErr('校验中…');
+  postUnlock(pw,false).then(d=>{
+    if(d.ok){ curPw=pw; try{sessionStorage.setItem('hpw',pw);}catch(e){} startQuiz(); }
+    else if(d.reason==='invalid'){ setErr('密码错误，请检查后重试'); }
+    else if(d.reason==='exhausted'){ setErr('该密码已用完 3 次，请更换密码'); }
+  }).catch(()=>setErr('网络异常，请稍后重试'));
+}
+function postUnlock(pw,consume){
+  // 优先调用同源后端 /api/unlock（部署在 Node 服务时生效，支持跨用户真实限次 + 后台管理）
+  return fetch('/api/unlock',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({password:pw,consume:!!consume})})
+    .then(r=>{ if(!r.ok) throw new Error('no_api'); return r.json(); })
+    .then(d=> (d && typeof d.ok==='boolean') ? d : (function(){throw new Error('bad')})() )
+    .catch(()=> localUnlock(pw,consume));   // 纯静态托管（如 GitHub Pages）无后端时，回退前端本地限次
+}
+// 无后端降级：用 localStorage 在本机记录每个密码已用次数（上限 3 次）。可被清缓存重置，仅作纯静态托管的兜底。
+function localUnlock(pw,consume){
+  const MAX=3;
+  try{
+    const KEY='ht_pw_uses';
+    let m={}; try{ m=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+    if(consume){ m[pw]=(m[pw]||0)+1; localStorage.setItem(KEY,JSON.stringify(m));
+      return {ok:true, remaining:Math.max(0,MAX-(m[pw]||0)), reason:'local'}; }
+    const used=m[pw]||0;
+    if(used>=MAX) return {ok:false, reason:'exhausted'};
+    return {ok:true, remaining:MAX-used, reason:'local'};
+  }catch(e){ return {ok:true, remaining:MAX, reason:'local'}; } // 隐私模式等异常：放行不限次
+}
+
+/* ---- 答题 ---- */
+function startQuiz(){
+  sharedView=false; $('sharedBar').style.display='none';
+  idx=0; answers=new Array(QUIZ.length).fill(undefined);
+  renderQuiz(); show('s_quiz');
+}
+function renderQuiz(){
+  const Q=QUIZ[idx];
+  $('qnum').textContent='Q'+(idx+1)+' / '+QUIZ.length;
+  $('prog').style.width=(idx/QUIZ.length*100)+'%';
+  $('qtext').textContent=Q.q;
+  $('backBtn').disabled=(idx===0);
+  const box=$('opts'); box.innerHTML='';
+  Q.opts.forEach(o=>{
+    const b=document.createElement('button'); b.className='opt';
+    if(answers[idx]===o.d) b.classList.add('sel');
+    b.textContent=o.t;
+    b.onclick=()=>{
+      answers[idx]=o.d;
+      [...box.children].forEach(c=>c.classList.remove('sel'));
+      b.classList.add('sel');
+      $('nextBtn').disabled=false; $('nextBtn').style.opacity='1';
+    };
+    box.appendChild(b);
+  });
+  const last=(idx===QUIZ.length-1);
+  const nb=$('nextBtn');
+  nb.textContent= last? '查看结果 🎉' : '下一题 →';
+  nb.disabled = (answers[idx]===undefined);
+  nb.style.opacity = (answers[idx]===undefined)? '.45':'1';
+}
+function goBack(){ if(idx>0){idx--;renderQuiz();} }
+function goNext(){
+  if(answers[idx]===undefined) return;
+  if(idx<QUIZ.length-1){ idx++; renderQuiz(); }
+  else finish();
+}
+
+/* ---- 完成 → 计分 + 渲染 + 消耗次数 ---- */
+function finish(){
+  const scores={}; ORDER.forEach(k=>scores[k]=0);
+  answers.forEach(d=>{ if(d) scores[d]++; });
+  const r=ORDER.slice().sort((a,b)=>scores[b]-scores[a]);
+  const top=r[0], sec=r[1];
+  renderResult(top,sec,scores);
+  show('s_res');
+  // 消耗一次（仅本人测试，分享查看不消耗）
+  if(curPw){
+    postUnlock(curPw,true).then(d=>{
+      if(d.ok){ leftCount=d.remaining; updateLeft(); }
+    }).catch(()=>{});
+  }
+}
+function updateLeft(){
+  if(sharedView||leftCount===null){ return; }
+  $('leftNote').textContent = leftCount>0
+    ? ('本密码还可测试 '+leftCount+' 次')
+    : '本密码已用完 3 次，再测需更换密码';
+}
+
+/* ---- 渲染结果 ---- */
+function renderResult(top, sec, scores){
+  const D=DIMS[top], S=DIMS[sec];
+  $('resTitle').textContent=D.icon+' '+D.code+' · '+D.name;
+  $('resOne').textContent=D.one;
+  $('resThink').textContent=D.think;
+  $('resActually').textContent=D.actual;
+  const sp=$('resSparks'); sp.innerHTML='';
+  D.sparks.forEach(s=>{const li=document.createElement('li');li.textContent=s;sp.appendChild(li);});
+  $('resTheory').textContent=D.theory;
+  $('resSuper').textContent=D.super;
+  $('resLearn').innerHTML='<b>'+D.learn.replace(/^冷知识：/,'')+'</b>';
+  $('resDir').textContent=D.dir;
+  $('resCombo').innerHTML=
+    '<div class="lab" style="font-size:13px;font-weight:700;color:#a05a3a;letter-spacing:.5px;margin-bottom:6px">你的天赋组合</div>'+
+    '<p style="margin:0 0 6px;font-size:15.5px"><b>主导：'+D.icon+D.code+'</b> ＋ <b>辅助：'+S.icon+S.code+'</b></p>'+
+    '<p style="margin:0;font-size:14.5px;color:#4a443e">'+D.one.replace(/。$/,'')+'，而当 '+S.name+' 作为你的辅助天赋时——'+S.asSec+'</p>';
+  const low=ORDER.slice().sort((a,b)=>scores[a]-scores[b])[0];
+  const L=DIMS[low];
+  $('resLow').textContent='你得分最低的是「'+L.name+'」，但这不代表你缺它，只是它暂时退居幕后。有意思的是：'+L.asSec+' 说不定哪天，它会成为你最意外的惊喜。';
+  drawRadar($('radar'), scores);
+  drawPoster(top, sec, D, S, scores);
+  // 写入分享链接（覆盖 hash，不刷新）
+  const payload={top,sec,scores};
+  const enc=encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(payload)))));
+  history.replaceState(null,'','#r='+enc);
+}
+
+/* ---- 雷达图 ---- */
+function normScores(sc){
+  const max=Math.max(...ORDER.map(k=>sc[k]));
+  return ORDER.map(k=>({k, v: max? (0.32 + (sc[k]/max)*0.68) : 0.32}));
+}
+function drawRadar(cv, sc){
+  const ctx=cv.getContext('2d'); const W=cv.width,H=cv.height; ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2, R=Math.min(W,H)*0.34, N=ORDER.length;
+  const data=normScores(sc);
+  for(let ring=1;ring<=4;ring++){
+    ctx.beginPath();
+    for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;const r=R*ring/4;
+      const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+    ctx.closePath();ctx.strokeStyle='#efe6db';ctx.lineWidth=2;ctx.stroke();
+  }
+  ctx.fillStyle='#6b635a';ctx.font='bold 26px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));
+    ctx.strokeStyle='#efe6db';ctx.lineWidth=2;ctx.stroke();
+    const lx=cx+(R+42)*Math.cos(a), ly=cy+(R+42)*Math.sin(a);
+    ctx.fillStyle=DIMS[ORDER[i]].color;
+    ctx.fillText(DIMS[ORDER[i]].code, lx, ly);
+  }
+  ctx.beginPath();
+  for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;const r=R*data[i].v;
+    const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+  ctx.closePath();
+  const top=DIMS[rankFrom(sc)[0]].color;
+  ctx.fillStyle=hexA(top,0.22);ctx.fill();
+  ctx.strokeStyle=top;ctx.lineWidth=3.5;ctx.stroke();
+  for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;const r=R*data[i].v;
+    const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);
+    ctx.beginPath();ctx.arc(x,y,7,0,7);ctx.fillStyle=top;ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,7,0,7);ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.stroke();}
+}
+function rankFrom(sc){return ORDER.slice().sort((a,b)=>sc[b]-sc[a]);}
+function hexA(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;}
+
+/* ---- 分享海报（大图） ---- */
+function drawPoster(topKey, secKey, D, S, sc){
+  const cv=$('poster');const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);
+  const g=ctx.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,'#fff3ec');g.addColorStop(1,'#ffe3d6');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=D.color;ctx.fillRect(0,0,W,150);
+  ctx.fillStyle='#fff';ctx.font='bold 40px sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillText('我的隐藏天赋',60,75);
+  ctx.font='26px sans-serif';ctx.fillStyle='rgba(255,255,255,.9)';
+  ctx.fillText('你被埋没的那块光，其实是——',60,118);
+  ctx.textAlign='center';ctx.fillStyle='#2b2622';ctx.font='bold 84px sans-serif';
+  ctx.fillText(D.icon, W/2, 280);
+  ctx.fillStyle=D.color;ctx.font='bold 64px sans-serif';
+  ctx.fillText(D.code, W/2, 380);
+  ctx.fillStyle='#6b635a';ctx.font='30px sans-serif';
+  ctx.fillText(D.name, W/2, 440);
+  ctx.fillStyle='#4a443e';ctx.font='30px sans-serif';
+  wrapText(ctx, D.one, W/2, 500, W-120, 44);
+  ctx.textAlign='left';ctx.fillStyle='#2b2622';ctx.font='bold 30px sans-serif';
+  ctx.fillText('✨ 我的隐藏闪光点', 70, 600);
+  ctx.font='28px sans-serif';ctx.fillStyle='#4a443e';
+  let y=650; D.sparks.forEach(s=>{ ctx.fillText('• '+s, 80, y); y+=58; });
+  const mini=document.createElement('canvas');mini.width=420;mini.height=420;
+  drawRadarMini(mini, sc, D.color);
+  ctx.drawImage(mini, W/2-180, y+10, 360, 360);
+  const fy=y+10+380;
+  ctx.textAlign='center';ctx.fillStyle='#a05a3a';ctx.font='28px sans-serif';
+  ctx.fillText('辅助天赋：'+S.icon+S.code, W/2, fy+20);
+  ctx.fillStyle='#8a8178';ctx.font='24px sans-serif';
+  ctx.fillText('扫码测出你的隐藏天赋 👀', W/2, H-70);
+  ctx.fillStyle='#b5aba0';ctx.font='22px sans-serif';
+  ctx.fillText('基于加德纳 · 多元智能理论', W/2, H-34);
+}
+function drawRadarMini(cv, sc, color){
+  const ctx=cv.getContext('2d');const W=cv.width,H=cv.height;ctx.clearRect(0,0,W,H);
+  const cx=W/2,cy=H/2,R=Math.min(W,H)*0.34,N=ORDER.length;const data=normScores(sc);
+  for(let ring=1;ring<=3;ring++){ctx.beginPath();for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;const r=R*ring/3;const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.strokeStyle='#ead9cb';ctx.lineWidth=1.5;ctx.stroke();}
+  ctx.beginPath();for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;const r=R*data[i].v;const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.fillStyle=hexA(color,0.22);ctx.fill();ctx.strokeStyle=color;ctx.lineWidth=3;ctx.stroke();
+  ctx.fillStyle='#7a7066';ctx.font='bold 20px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  for(let i=0;i<N;i++){const a=-Math.PI/2+i*2*Math.PI/N;const lx=cx+(R+30)*Math.cos(a),ly=cy+(R+30)*Math.sin(a);ctx.fillStyle=DIMS[ORDER[i]].color;ctx.fillText(DIMS[ORDER[i]].code,lx,ly);}
+}
+function wrapText(ctx,text,cx,y,maxW,lh){
+  const chars=text.split('');let line='';let yy=y;
+  for(let i=0;i<chars.length;i++){
+    const test=line+chars[i];
+    if(ctx.measureText(test).width>maxW && line){ctx.fillText(line,cx,yy);line=chars[i];yy+=lh;}
+    else line=test;
+  }
+  if(line)ctx.fillText(line,cx,yy);
+}
+
+/* ---- 保存大图 ---- */
+function saveResult(){
+  const cv=$('poster');
+  let url;
+  try{ url=cv.toDataURL('image/png'); }catch(e){ toast('生成失败，请重试'); return; }
+  const img=$('posterImg'); img.src=url; img.style.display='block';
+  // 电脑端直接下载；手机端用户可长按图片保存
+  const a=document.createElement('a');
+  a.download='我的隐藏天赋-'+DIMS[rankFrom(curScores())[0]].code+'.png';
+  a.href=url; a.click();
+  toast('图片已生成：手机可长按保存，电脑会自动下载 💾');
+  $('posterImg').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function curScores(){
+  const sc={}; ORDER.forEach(k=>sc[k]=0);
+  if(sharedView){
+    // 从 hash 解析
+    try{const j=JSON.parse(decodeURIComponent(escape(atob((location.hash||'#r=').slice(3)))));return j.scores;}catch(e){}
+  }
+  answers.forEach(d=>{if(d)sc[d]++;});
+  return sc;
+}
+
+/* ---- 复制结果链接 ---- */
+function copyLink(){
+  const url=location.href;
+  const done=()=>toast('结果链接已复制，去分享吧 🔗');
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(done).catch(()=>fallbackCopy(url,done));
+  } else fallbackCopy(url,done);
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');cb&&cb();}catch(e){toast('复制失败，请手动复制地址栏');}
+  ta.remove();
+}
+
+/* ---- 再测一次 ---- */
+function retest(){
+  if(sharedView || !curPw){
+    // 分享查看者或无密码：去密码门
+    history.replaceState(null,'',location.pathname);
+    sharedView=false; $('sharedBar').style.display='none';
+    setErr(''); $('pwInput').value=''; show('s_gate'); return;
+  }
+  postUnlock(curPw,false).then(d=>{
+    if(d.ok){ startQuiz(); }
+    else { // 用尽
+      try{sessionStorage.removeItem('hpw');}catch(e){}
+      curPw=null; leftCount=null;
+      setErr('该密码已用完 3 次，请更换密码或输入新密码');
+      $('pwInput').value=''; show('s_gate');
+    }
+  }).catch(()=>startQuiz());
+}
+function takeMine(){
+  history.replaceState(null,'',location.pathname);
+  sharedView=false; $('sharedBar').style.display='none';
+  setErr(''); $('pwInput').value=''; show('s_gate');
+}
+
+/* ---- 好评有礼弹窗 ---- */
+function openReview(){$('reviewModal').classList.add('on');}
+function closeReview(){$('reviewModal').classList.remove('on');}
+
+/* ---- Toast ---- */
+let toastTimer=null;
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('on');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('on'),2200);
+}
+</script>
+</body>
+</html>

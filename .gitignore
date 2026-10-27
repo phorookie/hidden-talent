@@ -1,0 +1,12 @@
+# 本地密码库 / 运行时文件（不要上传）
+passwords.json
+*.log
+
+# 项目记忆 / 工作区数据（含本地偏好，勿公开）
+.workbuddy/
+
+# 依赖
+node_modules/
+
+# 临时校验脚本
+_check*
