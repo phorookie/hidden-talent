@@ -28,7 +28,7 @@
 <body>
   <div class="wrap">
     <h1>🔐 密码管理后台</h1>
-    <p class="sub">管理测试密码与剩余次数 · 数据存于后端服务器（passwords.json），可随时增删改</p>
+    <p class="sub">管理测试密码与剩余次数 · 数据存于 Supabase 后端，可随时增删改</p>
 
     <div class="card">
       <label>管理密钥 master</label>
@@ -55,15 +55,17 @@
       <button class="btn ghost" onclick="setMaster()">修改密钥</button>
     </div>
 
-    <p class="tip">安全说明：后台通过后端接口（/api/admin）操作，所有读写都需校验管理密钥 master。请尽快把默认密钥 CHANGE_ME_ADMIN 改成你自己的。此页面公开可访问，请妥善保管密钥；建议用 Nginx 反代并配置 HTTPS 以提升安全性。</p>
+    <p class="tip">安全说明：后台通过后端接口（/bright-api）操作，所有读写都需校验管理密钥 master。请尽快把默认密钥 CHANGE_ME_ADMIN 改成你自己的。此页面公开可访问，请妥善保管密钥；建议通过 HTTPS（GitHub Pages 已默认 HTTPS）访问以提升安全性。</p>
   </div>
 
 <script>
 const $ = id => document.getElementById(id);
+/* 后端基地址：Supabase Edge Function 填 'https://<项目ref>.functions.supabase.co/functions/v1'；留空为同源 */
+const API_BASE = 'https://crimzczezbisyypstymx.supabase.co/functions/v1';
 const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 async function callAdmin(payload){
-  const r = await fetch('/api/admin', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+  const r = await fetch((API_BASE||'')+'/bright-api', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({route:'admin', ...payload})});
   return r.json();
 }
 

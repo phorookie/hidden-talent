@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>隐藏天赋实验室 · 测出你被埋没的那块光</title>
-<!-- 后端已切换为同源 Node 服务（server.js），无需 Supabase / 外部 CDN -->
+<!-- 后端可同源（server.js）或独立部署（Supabase Edge Function 等）：API_BASE 留空=同源，填地址=独立后端 -->
 <style>
   :root{
     --bg:#fbf7f2; --card:#ffffff; --ink:#2b2622; --muted:#8a8178;
@@ -420,6 +420,11 @@ const QUIZ = [
    {t:"🌿 去户外走走、撸猫、看天",d:"naturalist"}]}
 ];
 
+/* ============== 后端地址配置 ============== */
+/* 独立后端基地址：Supabase Edge Function 填 'https://<项目ref>.functions.supabase.co/functions/v1'
+   留空 '' 表示同源（部署在同源 Node 服务）；接口调用失败会自动回退前端本地限次 */
+const API_BASE = 'https://crimzczezbisyypstymx.supabase.co/functions/v1';
+
 /* ============== 状态与流程 ============== */
 let idx=0; let answers=[]; let curPw=null; let sharedView=false; let leftCount=null;
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);}
@@ -459,8 +464,8 @@ function tryUnlock(){
 }
 function postUnlock(pw,consume){
   // 优先调用同源后端 /api/unlock（部署在 Node 服务时生效，支持跨用户真实限次 + 后台管理）
-  return fetch('/api/unlock',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({password:pw,consume:!!consume})})
+  return fetch((API_BASE||'')+'/bright-api',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({route:'unlock',password:pw,consume:!!consume})})
     .then(r=>{ if(!r.ok) throw new Error('no_api'); return r.json(); })
     .then(d=> (d && typeof d.ok==='boolean') ? d : (function(){throw new Error('bad')})() )
     .catch(()=> localUnlock(pw,consume));   // 纯静态托管（如 GitHub Pages）无后端时，回退前端本地限次
