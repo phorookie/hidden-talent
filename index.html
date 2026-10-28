@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>隐藏天赋实验室 · 测出你被埋没的那块光</title>
+<meta name="description" content="8 维多元智能自测，3 分钟测出你被忽略的隐藏天赋与天赋组合，生成专属天赋海报。">
+<meta property="og:title" content="隐藏天赋实验室 · 测出你被埋没的那块光">
+<meta property="og:description" content="8 维多元智能自测，3 分钟测出你被忽略的隐藏天赋与天赋组合。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://phorookie.github.io/hidden-talent/">
+<meta property="og:image" content="https://phorookie.github.io/hidden-talent/cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A8%3C/text%3E%3C/svg%3E">
 <!-- 后端可同源（server.js）或独立部署（Supabase Edge Function 等）：API_BASE 留空=同源，填地址=独立后端 -->
 <style>
   :root{
@@ -131,9 +139,9 @@
     <p class="sub">每个密码可测试 3 次 · 仅供本人使用</p>
     <div class="card gate-card">
       <label class="lab">测试密码</label>
-      <input class="pw-input" id="pwInput" type="text" inputmode="text" placeholder="请输入密码，如 TALENT2026" autocomplete="off">
+      <input class="pw-input" id="pwInput" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="请输入密码，如 TALENT2026" autocomplete="off">
       <div class="pw-err" id="pwErr"></div>
-      <div class="pw-hint" id="pwHint">购买 / 领取后获得的密码，形如 TALENT2026</div>
+      <div class="pw-hint" id="pwHint">在小红书笔记 / 私信领取测试密码，形如 TALENT2026</div>
       <button class="btn" id="pwBtn" onclick="tryUnlock()">开始测试 →</button>
     </div>
     <div class="disclaim">本测试用于自我探索与趣味娱乐，结果非专业心理诊断。基于加德纳 · 多元智能理论。</div>
@@ -217,12 +225,11 @@
     <h2>好评有礼 · 返现 1 元</h2>
     <p style="margin-top:4px">感谢你愿意为小店说句好话 🥰</p>
     <div class="review-steps">
-      <div>1️⃣ 在店铺 / 商品页给一个 <b>五星好评</b></div>
-      <div>2️⃣ 截图保存你的好评页面</div>
-      <div>3️⃣ 联系客服，发送好评截图</div>
-      <div>4️⃣ 客服核对后，<b>立返 1 元</b> 到账 💰</div>
+      <div>1️⃣ 在 <b>小红书</b> 发一篇关于本测试的好评笔记（截图保存）</div>
+      <div>2️⃣ 把笔记截图发到本账号 <b>私信</b>，或加微信（见下方）</div>
+      <div>3️⃣ 客服核对后，<b>立返 1 元</b> 到账 💰</div>
     </div>
-    <div class="kf">📮 联系客服：在店铺 / 商品页找到客服入口，发送好评截图即可</div>
+    <div class="kf">📮 联系客服：小红书私信 <b>@你的小红书号</b> 或 添加微信 <b>你的微信号</b>，发送好评截图即可</div>
     <p class="muted" style="font-size:12.5px;margin:4px 0 0">活动限每人一次 · 最终解释权归本店所有</p>
     <button class="btn" onclick="closeReview()">我知道啦</button>
   </div>
@@ -453,14 +460,17 @@ function $(id){return document.getElementById(id);}
 /* ---- 密码校验 ---- */
 function setErr(msg){$('pwErr').textContent=msg||'';}
 function tryUnlock(){
+  const btn=$('pwBtn');
   const pw=$('pwInput').value.trim();
   if(!pw){setErr('请输入测试密码');return;}
+  if(btn)btn.disabled=true;            // 校验期间禁用，防止手机端连点
   setErr('校验中…');
   postUnlock(pw,false).then(d=>{
+    if(btn)btn.disabled=false;
     if(d.ok){ curPw=pw; try{sessionStorage.setItem('hpw',pw);}catch(e){} startQuiz(); }
     else if(d.reason==='invalid'){ setErr('密码错误，请检查后重试'); }
     else if(d.reason==='exhausted'){ setErr('该密码已用完 3 次，请更换密码'); }
-  }).catch(()=>setErr('网络异常，请稍后重试'));
+  }).catch(()=>{ if(btn)btn.disabled=false; setErr('网络异常，请稍后重试'); });
 }
 function postUnlock(pw,consume){
   // 优先调用同源后端 /api/unlock（部署在 Node 服务时生效，支持跨用户真实限次 + 后台管理）
@@ -672,7 +682,8 @@ function saveResult(){
   const a=document.createElement('a');
   a.download='我的隐藏天赋-'+DIMS[rankFrom(curScores())[0]].code+'.png';
   a.href=url; a.click();
-  toast('图片已生成：手机可长按保存，电脑会自动下载 💾');
+  const _m=/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  toast(_m?'图片已生成：长按上方图片即可保存到相册 📲':'图片已生成：已自动下载，也可右键保存 💾');
   $('posterImg').scrollIntoView({behavior:'smooth',block:'center'});
 }
 function curScores(){

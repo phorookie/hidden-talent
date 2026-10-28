@@ -18,9 +18,9 @@ function json(o: any, status = 200) {
 }
 
 Deno.serve(async (req) => {
-  // CORS 预检
+  // CORS 预检（必须用 200 + 空 body；204 不允许带 body，Supabase 网关会报 500）
   if (req.method === "OPTIONS") {
-    return new Response("ok", { status: 204, headers: corsHeaders });
+    return new Response(null, { status: 200, headers: corsHeaders });
   }
 
   // 用 service_role 密钥（Supabase 部署后自动注入环境变量，跳过 RLS，仅函数内部可用）
@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
 
   // ===== 密码校验 / 限次 =====
   if (route === "unlock") {
-    const pw = String(body.password || "");
+    const pw = String(body.password || "").trim().toUpperCase();
     const consume = !!body.consume;
     const { data, error } = await supabase
       .from("passwords")
